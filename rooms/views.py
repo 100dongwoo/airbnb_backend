@@ -1,4 +1,5 @@
 from django.http import response
+from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -26,31 +27,57 @@ def rooms_view(request):
         serializer = WriteRoomSerializer(data=request.data)
 
         if serializer.is_valid():
-            room=serializer.save(user=request.user)
-            room_serializer=ReadRoomSerializer(room).data
-            return Response(data=room_serializer,status=status.HTTP_200_OK)
+            room = serializer.save(user=request.user)
+            room_serializer = ReadRoomSerializer(room).data
+            return Response(data=room_serializer, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RoomView(APIView):
+    def get(self, request):
+        rooms = Room.objects.all()[:5]
+        serializer = ReadRoomSerializer(rooms, many=True).data
+        return Response(serializer)
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        serializer = WriteRoomSerializer(data=request.data)
+
+        if serializer.is_valid():
+            room = serializer.save(user=request.user)
+            room_serializer = ReadRoomSerializer(room).data
+            return Response(data=room_serializer, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SeeRoomView(RetrieveAPIView):
-    queryset = Room.objects.all()
-    serializer_class = ReadRoomSerializer
+class RoomView(APIView):
+    def get(self, request, pk):
+        try:
+            room = Room.objects.get(pk=pk)
+            serializer = ReadRoomSerializer(room).data
+            return Response(serializer)
+        except Room.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    # lookup_url_kwarg = "pkkk"
+    def put(self, request):
+        pass
 
-    #
-    # # APIView
-    # def get(self, request):
-    #     rooms = Room.objects.all()
-    #     serializer = RoomSerializer(rooms, many=True)
-    #     return Response(serializer.data)
+    def delete(self, request):
+        pass
+# lookup_url_kwarg = "pkkk"
 
-    # def post(self, request):
-    #     pass
+#
+# # APIView
+# def get(self, request):
+#     rooms = Room.objects.all()
+#     serializer = RoomSerializer(rooms, many=True)
+#     return Response(serializer.data)
 
+# def post(self, request):
+#     pass
 
 # @api_view(["GET"])
 # def list_rooms(request):
