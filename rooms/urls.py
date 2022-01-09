@@ -9,6 +9,6 @@ from . import views
 # urlpatterns = router.urls
 
 urlpatterns = [
-    path("", views.ListRoomsView.as_view()),
+    path("", views.rooms_view),
     path("<int:pk>/", views.SeeRoomView.as_view()),
 ]

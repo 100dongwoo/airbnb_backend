@@ -3,7 +3,6 @@ from core.models import CoreModel
 
 
 class Room(CoreModel):
-    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=140)
     address = models.CharField(max_length=140)
     price = models.IntegerField(help_text="USD per night")
