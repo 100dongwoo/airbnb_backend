@@ -34,7 +34,7 @@ def rooms_view(request):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RoomView(APIView):
+class RoomsView(APIView):
     def get(self, request):
         rooms = Room.objects.all()[:5]
         serializer = ReadRoomSerializer(rooms, many=True).data
@@ -67,6 +67,8 @@ class RoomView(APIView):
 
     def delete(self, request):
         pass
+
+
 # lookup_url_kwarg = "pkkk"
 
 #
