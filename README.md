@@ -20,3 +20,6 @@ REST & GraphQL API of the Airbnb Clone using Django REST Framework and Graphene 
 - pip freeze > requirements.txt 사용한 버전관리가능
 - serialize : 파이썬 객체에서 JSON객체로 변환시키는것
   <!-- 2.3 -->
+
+### APIView put
+![img.png](img.png)
