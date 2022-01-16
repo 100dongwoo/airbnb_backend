@@ -15,25 +15,25 @@ from rest_framework.pagination import PageNumberPagination
 #     queryset = Room.objects.all()
 #     serializer_class = RoomSerializer
 
-
-@api_view(["GET", "POST"])
-def rooms_view(request):
-    if request.method == "GET":
-        rooms = Room.objects.all()[:5]
-        serializer = RoomSerializer(rooms, many=True).data
-        return Response(serializer)
-
-    elif request.method == "POST":
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        serializer = RoomSerializer(data=request.data)
-
-        if serializer.is_valid():
-            room = serializer.save(user=request.user)
-            room_serializer = RoomSerializer(room).data
-            return Response(data=room_serializer, status=status.HTTP_200_OK)
-        else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#  이 아래
+# @api_view(["GET", "POST"])
+# def rooms_view(request):
+#     if request.method == "GET":
+#         rooms = Room.objects.all()[:5]
+#         serializer = RoomSerializer(rooms, many=True).data
+#         return Response(serializer)
+#
+#     elif request.method == "POST":
+#         if not request.user.is_authenticated:
+#             return Response(status=status.HTTP_401_UNAUTHORIZED)
+#         serializer = RoomSerializer(data=request.data)
+#
+#         if serializer.is_valid():
+#             room = serializer.save(user=request.user)
+#             room_serializer = RoomSerializer(room).data
+#             return Response(data=room_serializer, status=status.HTTP_200_OK)
+#         else:
+#             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OwnPagination(PageNumberPagination):
@@ -45,7 +45,7 @@ class RoomsView(APIView):
         paginator = OwnPagination()
         rooms = Room.objects.all()
         results = paginator.paginate_queryset(rooms, request)
-        serializer = RoomSerializer(results, many=True)
+        serializer = RoomSerializer(results, many=True, context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
@@ -72,7 +72,7 @@ class RoomView(APIView):
     def get(self, request, pk):
         room = self.get_room(pk)
         if room is not None:
-            serializer = RoomSerializer(room).data
+            serializer = RoomSerializer(room, context={"request": request}).data
             return Response(serializer)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -137,7 +137,7 @@ def room_search(request):
         print(filter_kwargs)
         rooms = Room.objects.all()
     results = paginator.paginate_queryset(rooms, request)
-    serializers = RoomSerializer(results, many=True)
+    serializers = RoomSerializer(results, many=True, )
     return paginator.get_paginated_response(serializers.data)
 
 # lookup_url_kwarg = "pkkk"
