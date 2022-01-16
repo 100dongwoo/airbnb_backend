@@ -23,3 +23,6 @@ REST & GraphQL API of the Airbnb Clone using Django REST Framework and Graphene 
 
 ### APIView put
 ![img.png](img.png)
+
+
+- jwt 사용이유 이 데이터를 누군가 건드렸느냐 아니면 그대로냐 를 구분하기 위함
