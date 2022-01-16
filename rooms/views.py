@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from .models import Room
 from .serializers import RoomSerializer
 from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 
 
 # class ListRoomsView(ListAPIView):
@@ -33,12 +35,18 @@ def rooms_view(request):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class OwnPagenation(PageNumberPagination):
+    page_size = 20
+
 
 class RoomsView(APIView):
     def get(self, request):
-        rooms = Room.objects.all()[:5]
-        serializer = RoomSerializer(rooms, many=True).data
-        return Response(serializer)
+        paginator = OwnPagenation()
+        paginator.page_size = 20
+        rooms = Room.objects.all()
+        results = paginator.paginate_queryset(rooms, request)
+        serializer = RoomSerializer(results, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         if not request.user.is_authenticated:
@@ -93,6 +101,16 @@ class RoomView(APIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["GET"])
+def room_search(request):
+    paginator = OwnPagenation()
+    paginator.page_size = 10
+    rooms = Room.objects.filter()
+    results = paginator.paginate_queryset(rooms, request)
+    serializers = RoomSerializer(results, many=True)
+    return paginator.get_paginated_response(serializers.data)
 
 # lookup_url_kwarg = "pkkk"
 
