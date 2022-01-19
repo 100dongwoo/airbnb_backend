@@ -8,8 +8,15 @@ from . import views
 # router.register("", viewsets.RoomViewset, basename="room")
 # urlpatterns = router.urls
 
-urlpatterns = [
-    path("", views.RoomsView.as_view()),
-    path("<int:pk>/", views.RoomView.as_view()),
-    path("search/", views.room_search)
-]
+# urlpatterns = [
+#     # path("", views.RoomsView.as_view()),
+#     # path("<int:pk>/", views.RoomView.as_view()),
+#     # path("search/", views.room_search)
+# ]
+
+#
+# viewset
+app_name = "rooms"
+router = DefaultRouter()
+router.register("", views.RoomViewSet)
+urlpatterns = router.urls
