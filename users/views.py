@@ -11,23 +11,39 @@ from rooms.models import Room
 from django.contrib.auth import authenticate
 import jwt
 from django.conf import settings
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 
-class UsersView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            new_user = serializer.save()
-            return Response(UserSerializer(new_user).data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST, )
-        # print(request.data)
+class UserViewset(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-        # if serializer.is_valid():
-        #     new_users = serializer.save()
-        #     return Response(UserSerializer(new_users))
-        # else:
-        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == "list":
+            permission_classes = [IsAdminUser]
+        elif self.action == "create" or self.action == "retrieve":
+            permission_classes = [AllowAny]
+
+        return [permission() for permission in permission_classes]
+
+
+# class UsersView(APIView):
+#     def post(self, request):
+#         serializer = UserSerializer(data=request.data)
+#         if serializer.is_valid():
+#             new_user = serializer.save()
+#             return Response(UserSerializer(new_user).data)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST, )
+# print(request.data)
+
+# if serializer.is_valid():
+#     new_users = serializer.save()
+#     return Response(UserSerializer(new_users))
+# else:
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MeView(APIView):
