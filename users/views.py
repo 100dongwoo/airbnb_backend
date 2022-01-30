@@ -60,7 +60,6 @@ class UsersViewSet(ModelViewSet):
     # 상단에 action과 동일 url을 사용, permission은 다르다 / 또한 detail은 상단 action따라감
     @favs.mapping.put
     def toggle_favs(self, request, pk):
-        print("123123213123123123131231231",pk)
         pk = request.data.get("pk", None)
         user = self.get_object()
         if pk is not None:
