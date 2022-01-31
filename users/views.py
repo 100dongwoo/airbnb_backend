@@ -18,7 +18,6 @@ from rest_framework.decorators import action
 
 
 class UsersViewSet(ModelViewSet):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,9 +26,9 @@ class UsersViewSet(ModelViewSet):
         if self.action == "list":
             permission_classes = [IsAdminUser]
         elif (
-            self.action == "create"
-            or self.action == "retrieve"
-            or self.action == "favs"
+                self.action == "create"
+                or self.action == "retrieve"
+                or self.action == "favs"
         ):
             permission_classes = [AllowAny]
         else:
@@ -54,7 +53,7 @@ class UsersViewSet(ModelViewSet):
     @action(detail=True)
     def favs(self, request, pk):
         user = self.get_object()
-        serializer = RoomSerializer(user.favs.all(), many=True).data
+        serializer = RoomSerializer(user.favs.all(), many=True, context={"request": request}).data
         return Response(serializer)
 
     # 상단에 action과 동일 url을 사용, permission은 다르다 / 또한 detail은 상단 action따라감
